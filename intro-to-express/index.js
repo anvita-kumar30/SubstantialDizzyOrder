@@ -1,9 +1,42 @@
 const express = require("express");
+
 const bodyParser = require('body-parser');
 
 const app = express();
 
+var userIsAuth = false;
+
 app.use(bodyParser.urlencoded({ extended: false }));
+
+function passwordCheck(req, res, next) {
+  const pass = req.body["password"];
+  // or
+  // const pass = req.body.password;
+  if (pass === "Donut") {
+    userISAuth = true;
+  }
+  next();
+}
+
+app.use(passwordCheck);
+
+app.get("/pass", function(req, res) {
+  res.sendFile(__dirname + "/password.html");
+});
+
+app.post("/check", function(req, res) {
+  if (userIsAuth) {
+    res.sendFile(__dirname + "/secret.html");
+  }
+  else {
+    res.sendFile(__dirname + "/password.html");
+  }
+});
+
+app.post("/logout", function(req, res) {
+  userIsAuth = false;
+  res.sendFile(__dirname + "/password.html");
+});
 
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/calci.html");
